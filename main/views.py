@@ -19,7 +19,7 @@ def show_main(request):
         Product(name="Reebok Classic Leather", price=90,
                 description="Classic Reebok design with leather upper and EVA midsole.", stock=12, image="products/rebook.jpg"),
         Product(name="Vans Old Skool", price=70,
-                description="Classic skate shoes with durable suede and canvas construction.", stock=20, image="products/vans.jpg"),
+                description="Classic skate shoes with durable suede and cool canvas construction.", stock=20, image="products/vans.jpg"),
         Product(name="Under Armour HOVR Phantom", price=140,
                 description="High-performance running shoes with UA HOVR cushioning.", stock=7, image="products/UA.jpg"),
     ]
