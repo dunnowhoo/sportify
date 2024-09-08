@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sportify</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Sportify</h1>
+
+        <div class="category-tabs">
+            <button class="active">Shoes</button>
+            <button>Clothing</button>
+            <button>Equipment</button>
+            <button>Accessories</button>
+            <button>Offers</button>
+        </div>
+
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product-item">
+                <div class="product-image">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                </div>
+                <h2>{{ product.name }}</h2>
+                <p class="short-description">{{ product.description|slice:":50" }}...</p>
+                <p><strong>Price:</strong> ${{ product.price }}</p>
+                <p><strong>Stock:</strong> {{ product.stock }}</p>
+                <p><strong>Status:</strong> {% if product.is_in_stock %} In Stock {% else %} Out of Stock {% endif %}</p>
+                <button class="buy-btn">Buy Now</button> <!-- Tombol buy tetap di sini -->
+            </div>
+            <hr>
+            {% empty %}
+            <p>No products available at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>
