@@ -13,7 +13,7 @@ def show_main(request):
         Product(name="Puma RS-X", price=120,
                 description="Retro-style Puma RS-X sneakers with bold color blocking.", stock=8, image="products/puma.jpg"),
         Product(name="New Balance 990v5", price=180,
-                description="Classic New Balance 990v5 with superior stability and cushioning.", stock=10, image="products/nb.jpg"),
+                description="Classic New Balance 990v5 with superior stability.", stock=10, image="products/nb.jpg"),
         Product(name="Converse Chuck Taylor All Star", price=60,
                 description="Timeless Chuck Taylor All Star sneakers with canvas upper.", stock=15, image="products/converse.jpg"),
         Product(name="Reebok Classic Leather", price=90,
