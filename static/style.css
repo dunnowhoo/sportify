@@ -20,7 +20,7 @@ body {
     border-radius: 8px;
 }
 
-h1 {
+h1, h2 {
     color: #121212;
     text-align: center;
     margin-top: 0;

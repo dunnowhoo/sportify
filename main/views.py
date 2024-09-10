@@ -24,4 +24,11 @@ def show_main(request):
                 description="High-performance running shoes with UA HOVR cushioning.", stock=7, image="products/UA.jpg"),
     ]
 
-    return render(request, "product_list.html", {'products': products})
+    context = {
+        'products': products,
+        'name': 'Fauzan Putra Sanjaya',
+        'npm': '2306275424',
+        'class': 'PBP A'
+    }
+
+    return render(request, "product_list.html", context)
