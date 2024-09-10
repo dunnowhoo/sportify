@@ -39,7 +39,8 @@ python manage.py collectstatic
 
 ## Bagan Request-Response Django
 
-![Bagan MVT](https://ibb.co.com/sFMkxCx)
+![image](https://github.com/user-attachments/assets/7e5edb3d-7a94-42ee-8b77-878bb7471dcc)
+
 
 Bagan ini menjelaskan proses request dari client ke server Django:
 - **Client** mengirim request ke **urls.py**.
