@@ -11,22 +11,26 @@ Aplikasi e-commerce untuk peralatan olahraga.
 ```
 django-admin startproject sportify
 ```
-2. Masuk ke direktori proyek sportify dan buat aplikasi baru dengan nama main
+2. Aktifkan virtual environment
+```
+source env/bin/activate
+```
+3. Masuk ke direktori proyek sportify dan buat aplikasi baru dengan nama main
 ```
 python manage.py startapp main
 ```
 3. Mengatur routing di `sportify/urls.py` untuk mengarahkan ke aplikasi `main`.
 4. Tambahkan aplikasi main ke INSTALLED_APPS di file settings.py dalam proyek Django.
 
-4. Membuat model `Product` dengan atribut `name`, `image`, `price`, `stok`, dan `description`.
-5. Jalankan migrasi untuk menerapkan perubahan ke database:
+5. Membuat model `Product` dengan atribut `name`, `image`, `price`, `stok`, dan `description`.
+6. Jalankan migrasi untuk menerapkan perubahan ke database:
 ```
 python manage.py makemigrations
 python manage.py migrate
 ```
-5. Membuat fungsi `show_main` di `views.py` untuk menampilkan nama aplikasi, nama,kelas, dan detail produk.
-6. Mengatur routing di `main/urls.py`.
-6. Buat folder templates di dalam direktori proyek dan tambahkan file HTML
+7. Membuat fungsi `show_main` di `views.py` untuk menampilkan nama aplikasi, nama,kelas, dan detail produk.
+8. Mengatur routing di `main/urls.py`.
+9. Buat folder templates di dalam direktori proyek dan tambahkan file HTML
 6. Buat folder static di dalam direktori proyek dan tambahkan file CSS
 6. Buat folder media di dalam direktori proyek dan tambahkan foto produk.
 6. Hapus entri untuk media dari file .gitignore agar file media dapat di-push ke PWS.
@@ -35,7 +39,7 @@ python manage.py migrate
 ```
 python manage.py collectstatic
 ```
-7. Melakukan deployment ke PWS.
+14. Melakukan deployment ke PWS.
 
 ## Bagan Request-Response Django
 
