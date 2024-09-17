@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %}
+<title>Sportify</title>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+<style>
+    /* Inline styles for this template */
+    .hidden {
+        display: none;
+    }
+</style>
+{% endblock meta %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sportify</title>
-</head>
+{% block content %}
 
 <body
     style="background-color: #212121; font-family: 'Arial', sans-serif; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
@@ -14,30 +20,52 @@
         <h1 style="color: #121212; text-align: center; margin-top: 0; padding-top: 20px;">Sportify</h1>
         <h1 style="font-size: 18px; text-align: center; margin-bottom: 20px;">{{ name }} - {{ npm }} - {{ class }}</h1>
 
+        <div class="add-product" style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <button id="add-product-btn"
+                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">
+                Add Product
+            </button>
+        </div>
 
-        <div class="category-tabs" style="display: flex; justify-content: center; margin-bottom: 20px;">
-            <button
-                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px;">Shoes</button>
-            <button
-                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px;">Clothing</button>
-            <button
-                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px;">Equipment</button>
-            <button
-                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px;">Accessories</button>
-            <button
-                style="background-color: #1db954; color: white; border: none; padding: 10px 20px; margin: 0 10px; cursor: pointer; border-radius: 5px;">Offers</button>
+        <div id="add-product-form" class="hidden" style="margin-bottom: 20px; text-align: center;">
+            <form method="POST" action="{% url 'main:create_product_entry' %}"
+                style="display: flex; flex-direction: column; align-items: center; width: 300px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                {% csrf_token %}
+                <div style="margin-bottom: 15px; width: 100%;">
+                    <label for="product_name" style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+                    <input type="text" id="product_name" name="name" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px; width: 100%;">
+                    <label for="product_price" style="display: block; margin-bottom: 5px; font-weight: bold;">Price:</label>
+                    <input type="number" id="product_price" name="price" required step="0.01"
+                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px; width: 100%;">
+                    <label for="product_description"
+                        style="display: block; margin-bottom: 5px; font-weight: bold;">Description:</label>
+                    <textarea id="product_description" name="description" rows="4" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; box-sizing: border-box;"></textarea>
+                </div>
+                <div style="margin-bottom: 15px; width: 100%;">
+                    <label for="product_stock" style="display: block; margin-bottom: 5px; font-weight: bold;">Stock:</label>
+                    <input type="number" id="product_stock" name="stock" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <button type="submit"
+                    style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-size: 16px;">
+                    Submit
+                </button>
+            </form>
         </div>
 
         <div class="product-list" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
             {% for product in products %}
             <div class="product-item"
                 style="width: 23%; background-color: #fff; margin-bottom: 30px; padding: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); border-radius: 8px; position: relative; min-height: 450px; display: flex; flex-direction: column; justify-content: space-between;">
-                <div class="product-image" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}"
-                        style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px;">
-                </div>
                 <h2 style="color: #212121; margin-bottom: 10px;">{{ product.name }}</h2>
-                <p class="short-description" style="font-size: 14px; color: #555; margin-bottom: 10px; height: 40px; overflow: hidden;">
+                <p class="short-description"
+                    style="font-size: 14px; color: #555; margin-bottom: 10px; height: 40px; overflow: hidden;">
                     {% if product.description|length > 50 %}
                     {{ product.description|slice:":50" }}...
                     {% else %}
@@ -54,10 +82,19 @@
             </div>
             <hr>
             {% empty %}
-            <p>No products available at the moment.</p>
+             <p style="text-align: center; color: #555; font-size: 16px; margin-top: 20px; width: 100%;">No products available.</p>
             {% endfor %}
         </div>
     </div>
+
+    <!-- JavaScript to toggle the form display -->
+    <script>
+        document.getElementById('add-product-btn').addEventListener('click', function () {
+            var form = document.getElementById('add-product-form');
+            form.classList.toggle('hidden');
+        });
+    </script>
+    {% endblock content %}
 </body>
 
 </html>
