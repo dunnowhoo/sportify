@@ -206,8 +206,10 @@ path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
 ## Menampilkan JSON dan XML dengan Postman
 ### Menampilkan XML
 <img width="777" alt="image" src="https://github.com/user-attachments/assets/ce1a7faf-55f2-442b-bfab-60275db3247f">
+
 ### Menampilkan JSON
 <img width="777" alt="image" src="https://github.com/user-attachments/assets/27c64980-1463-4302-a287-29853d657aae">
+
 ### Menampilkan XML dan JSON by id
 <img width="777" alt="image" src="https://github.com/user-attachments/assets/0b5c6aab-c5d9-4c38-ae73-f35ec9d93c75">
 <img width="777" alt="image" src="https://github.com/user-attachments/assets/854f85d7-0274-45fb-8d1a-c2b1840d7f52">
