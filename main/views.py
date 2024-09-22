@@ -20,17 +20,18 @@ def show_main(request):
 
 
 def create_product_entry(request):
-    form = ProductEntryForm(request.POST, request.FILES or None)
-
-    if request.method == "POST":
+    if request.method == 'POST':
+        form = ProductEntryForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            # Kembali ke halaman utama setelah berhasil menyimpan
             return redirect('main:show_main')
-        else:
-            print(form.errors)  # Tambahkan ini untuk melihat error dari form
+
+    else:
+        form = ProductEntryForm()
+
     context = {'form': form}
     return render(request, "create_product_entry.html", context)
-
 
 def show_xml(request):
     data = Product.objects.all()
