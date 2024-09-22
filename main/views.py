@@ -22,10 +22,12 @@ def show_main(request):
 def create_product_entry(request):
     form = ProductEntryForm(request.POST, request.FILES or None)
 
-    if form.is_valid() and request.method == "POST":
-        form.save()
-        return redirect('main:show_main')
-
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main')
+        else:
+            print(form.errors)  # Tambahkan ini untuk melihat error dari form
     context = {'form': form}
     return render(request, "create_product_entry.html", context)
 
