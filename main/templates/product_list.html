@@ -287,17 +287,13 @@
                 <div class="add-product">
                     <button class="dropdown-toggle">+</button>
                     <div class="dropdown">
-                        <form method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="text" name="name" placeholder="Product Name" required>
-                            <input type="number" name="price" placeholder="Price" required>
-                            <textarea name="description" placeholder="Description" required></textarea>
-                            <input type="number" name="stock" placeholder="Stock" required>
-                            <input type="file" name="image" accept="image/*">
-                            <button type="submit">Submit</button>
-                        </form>
+                        <input type="text" id="name" placeholder="Product Name">
+                        <input type="text" id="price" placeholder="Price">
+                        <input type="text" id="description" placeholder="Description">
+                        <input type="text" id="stock" placeholder="Stock">
+                        <input type="file" id="image" accept="image/*">
+                        <button onclick="addProduct()">Submit</button>
                     </div>
-                </div>
                 </div>
                 <div class="profile" style="margin-left: 10px;">
                     <button class="profile-button">👤</button>
@@ -410,6 +406,5 @@
                 const dropdown = document.querySelector('.dropdown');
                 dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
             });
-
     </script>
 {% endblock content %}
