@@ -8,6 +8,7 @@ class Product(models.Model):
     price = models.IntegerField()
     description = models.TextField()
     stock = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
 
     @property
     def is_in_stock(self):
