@@ -286,14 +286,23 @@
             <div class="right-section">
                 <div class="add-product">
                     <button class="dropdown-toggle">+</button>
-                    <div class="dropdown">
-                        <input type="text" id="name" placeholder="Product Name">
-                        <input type="text" id="price" placeholder="Price">
-                        <input type="text" id="description" placeholder="Description">
-                        <input type="text" id="stock" placeholder="Stock">
-                        <input type="file" id="image" accept="image/*">
-                        <button onclick="addProduct()">Submit</button>
-                    </div>
+                        <div class="dropdown">
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'main:create_product_entry' %}">
+                                {% csrf_token %}
+                                <!-- Input Product Name -->
+                                <input type="text" id="name" name="name" placeholder="Product Name" required>
+                                <!-- Input Price -->
+                                <input type="number" id="price" name="price" placeholder="Price" step="0.01" required>
+                                <!-- Input Description -->
+                                <input type="text" id="description" name="description" placeholder="Description" required>
+                                <!-- Input Stock -->
+                                <input type="number" id="stock" name="stock" placeholder="Stock" required>
+                                <!-- Input Image -->
+                                <input type="file" id="image" name="image" accept="image/*" required>
+                                <!-- Submit Button -->
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
                 </div>
                 <div class="profile" style="margin-left: 10px;">
                     <button class="profile-button">👤</button>
@@ -367,7 +376,7 @@
             {% if product.image %}
             <img src="{{ product.image.url }}" alt="Product Image">
             {% else %}
-            <img src="https://via.placeholder.com/30" alt="Default Image">
+            <img src="https://i.imgur.com/XLkw4CT.jpeg" alt="Default Image">
             {% endif %}
             <div class="product-info">
                 <p class="product-name">{{ product.name }}</p>
