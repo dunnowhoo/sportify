@@ -318,7 +318,10 @@
                         <p><strong>{{ name }}</strong></p>
                         <p>{{ npm }}</p>
                         <p>{{ class }}</p>
-                        <button onclick="logout()">Logout</button>
+                        <a href="{% url 'main:logout' %}">
+                            <button>Logout</button>
+                        </a>
+                        <h5>Sesi terakhir login: {{ last_login }}</h5>
                     </div>
                 </div>
             </div>
