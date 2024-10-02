@@ -5,6 +5,234 @@ At Sportify, we believe that finding the right equipment, apparel, and supplemen
 ## Tautan Aplikasi
 [https://fauzan-putra31-sportify.pbp.cs.ui.ac.id/](http://fauzan-putra31-sportify.pbp.cs.ui.ac.id/)
 
+
+# Tugas 5 
+## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Ketika beberapa CSS selector diterapkan pada elemen yang sama, urutan prioritas (specificity) menentukan aturan mana yang diambil. Prioritas ditentukan oleh "specificity" dari selector tersebut, diurutkan dari yang paling rendah ke yang paling tinggi sebagai berikut:
+- Tag Selector (misalnya div, p, h1) memiliki prioritas terendah.
+- Class Selector (misalnya .class-name) memiliki prioritas lebih tinggi dari tag selector.
+- ID Selector (misalnya #id-name) memiliki prioritas lebih tinggi dari class selector.
+- Inline Styles (CSS yang langsung diletakkan pada elemen menggunakan atribut style="") memiliki prioritas tertinggi.
+- !important: Properti dengan deklarasi !important akan mengesampingkan aturan lainnya, kecuali jika ada aturan lain dengan !important dan specificity yang lebih tinggi.
+
+Contoh:
+```css
+div { color: blue; }  /* Tag selector */
+.class-name { color: red; }  /* Class selector */
+#id-name { color: green; }  /* ID selector */
+<div id="id-name" class="class-name">Text</div>
+```
+Pada elemen tersebut, warna yang diambil adalah hijau karena ID selector memiliki prioritas tertinggi.
+## Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!
+Responsive design adalah konsep yang memastikan bahwa tampilan website atau aplikasi web dapat beradaptasi dengan berbagai ukuran layar dan perangkat (misalnya desktop, tablet, smartphone). Hal ini penting karena:
+
+- Pengalaman Pengguna (User Experience): Pengguna yang menggunakan perangkat dengan ukuran layar berbeda dapat tetap mengakses konten dengan nyaman tanpa harus memperbesar/memperkecil tampilan.
+- SEO: Google mengutamakan website yang mobile-friendly dalam hasil pencarian, sehingga responsive design dapat meningkatkan ranking SEO.
+- Aksesibilitas: Membuat aplikasi lebih mudah diakses oleh semua orang, termasuk mereka yang menggunakan perangkat mobile atau tablet.
+
+Contoh Aplikasi:
+
+- Sudah Menerapkan Responsive Design: Twitter dan Facebook, yang layout dan kontennya menyesuaikan ukuran layar perangkat pengguna.
+- Belum Menerapkan Responsive Design: Situs yang lebih lama dan tidak teroptimasi, seperti beberapa portal berita lama yang tidak menyesuaikan layout pada perangkat mobile.
+## Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+- Margin: Ruang di luar border yang mengatur jarak antara elemen dengan elemen lain di luar elemen tersebut.
+- Border: Garis yang membungkus elemen, di antara padding dan margin.
+- Padding: Ruang di dalam border, mengatur jarak antara konten elemen dan border elemen.
+
+Contoh Implementasi:
+
+```css
+div {
+  margin: 20px;  /* Ruang di luar border */
+  border: 1px solid black;  /* Garis di sekitar elemen */
+  padding: 10px;  /* Ruang antara border dan konten */
+}
+```
+Margin akan memberikan ruang di luar elemen div.
+Border membungkus elemen div.
+Padding akan membuat jarak antara konten dan border elemen div.
+## Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+- Flexbox: Flexbox (Flexible Box Layout) adalah metode tata letak satu dimensi (horizontal atau vertikal) yang mempermudah pengaturan layout item dalam sebuah container. Flexbox sangat cocok untuk mengatur elemen dalam satu baris atau kolom yang fleksibel dan responsif.
+
+Kegunaan: Flexbox sering digunakan untuk membuat elemen-elemen dalam container dapat diratakan (aligned), didistribusikan (distributed), dan diatur (ordered) dengan mudah.
+
+Contoh:
+
+```css
+.container {
+  display: flex;
+  justify-content: space-between;  /* Atur jarak antar item */
+  align-items: center;  /* Atur posisi vertikal item */
+}
+```
+Flexbox sangat berguna untuk hal-hal seperti navigasi horizontal, tombol, dan elemen layout responsif yang fleksibel.
+
+- Grid Layout: Grid Layout adalah metode tata letak dua dimensi (baris dan kolom) yang memungkinkan pembagian ruang halaman web secara lebih kompleks dan terstruktur. Ini memungkinkan pengembang untuk membuat grid yang terdiri dari kolom dan baris, dan mengatur elemen-elemen dalam grid dengan sangat presisi.
+
+Kegunaan: Grid layout cocok untuk layout yang lebih kompleks seperti dashboard atau halaman yang memiliki banyak elemen dengan ukuran dan posisi yang beragam.
+
+Contoh:
+```css
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;  /* 3 kolom dengan proporsi berbeda */
+  grid-template-rows: auto;
+  gap: 10px;  /* Jarak antar kolom dan baris */
+}
+```
+Flexbox untuk satu dimensi, sedangkan Grid Layout lebih cocok untuk pengaturan tata letak dua dimensi.
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+## Mengimplementasikan Fitur Edit dan Hapus Produk
+
+### 1. **Buat Fungsi Edit Produk di `views.py`:**
+   - Buka file `views.py` di subdirektori `main`.
+   - Tambahkan fungsi `edit_product` untuk menangani proses pengeditan produk:
+     ```python
+     from django.shortcuts import get_object_or_404, render, redirect
+     from .models import Product
+     from .forms import ProductEntryForm
+
+     def edit_product(request, id):
+         # Ambil produk berdasarkan id dengan get_object_or_404
+         product = get_object_or_404(Product, pk=id)
+
+         # Inisialisasi form dengan instance produk
+         form = ProductEntryForm(request.POST or None, request.FILES or None, instance=product)
+
+         if request.method == "POST" and form.is_valid():
+             # Simpan form dan kembali ke halaman utama
+             form.save()
+             return redirect('main:show_main')
+
+         # Jika request bukan POST atau form tidak valid, render template
+         context = {'form': form}
+         return render(request, 'edit_product.html', context)
+     ```
+
+### 2. **Buat Fungsi Hapus Produk di `views.py`:**
+   - Masih di file yang sama, tambahkan fungsi `delete_product` untuk menangani penghapusan produk:
+     ```python
+     def delete_product(request, id):
+         # Ambil produk berdasarkan id dengan get_object_or_404
+         product = get_object_or_404(Product, pk=id)
+
+         # Hapus produk
+         product.delete()
+
+         # Kembali ke halaman utama setelah delete
+         return redirect('main:show_main')
+     ```
+
+### 3. **Update URL Patterns di `urls.py`:**
+   - Buka file `urls.py` di subdirektori `main`.
+   - Tambahkan path untuk edit dan delete produk:
+     ```python
+     from django.urls import path
+     from .views import edit_product, delete_product
+
+     urlpatterns = [
+         path('edit-product/<uuid:id>/', edit_product, name='edit_product'),
+         path('delete-product/<uuid:id>/', delete_product, name='delete_product'),
+     ]
+     ```
+
+### 4. **Buat Template `edit_product.html`:**
+   - Buat file baru bernama `edit_product.html` di direktori template.
+   - Gunakan kode berikut untuk form edit produk:
+     ```html
+     {% extends 'base.html' %}
+     {% load static %}
+     {% block meta %}
+     <title>Edit Product</title>
+     <style>
+         .form-input {
+             width: calc(100% - 20px); /* Adjust to include padding */
+             background-color: black; /* Set background color to black */
+             border: none; /* Remove default border */
+             border-radius: 5px; /* Add rounded corners */
+             color: black; /* Set text color to white */
+             padding: 10px; /* Add padding for better spacing */
+             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: add a subtle shadow */
+             outline: none; /* Remove outline */
+         }
+         .form-input:focus {
+             border: 2px solid #1db954; /* Change border color on focus */
+             background-color: #111; /* Darker background on focus */
+         }
+     </style>
+     {% endblock meta %}
+
+     {% block content %}
+     {% include 'navbar.html' %}
+
+     <div class="flex flex-col min-h-screen bg-black">
+         <div class="container mx-auto px-4 py-8 mt-16 max-w-xl">
+             <h1 class="text-3xl font-bold text-center mb-8 text-white">Edit Product Entry</h1>
+
+             <div class="bg-gray-800 rounded-lg p-6">
+                 <form method="POST" class="space-y-6">
+                     {% csrf_token %}
+                     {% for field in form %}
+                     <div class="flex flex-col">
+                         <label for="{{ field.id_for_label }}" class="mb-2 font-semibold text-gray-300">
+                             {{ field.label }}
+                         </label>
+                         <div class="w-full">
+                             {{ field }}
+                         </div>
+                         {% if field.help_text %}
+                         <p class="mt-1 text-sm text-black">{{ field.help_text }}</p>
+                         {% endif %}
+                         {% for error in field.errors %}
+                         <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                         {% endfor %}
+                     </div>
+                     {% endfor %}
+                     <div class="flex justify-center mt-6">
+                         <button type="submit"
+                             class="bg-green-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-500 transition duration-300 ease-in-out w-full">
+                             Save Changes
+                         </button>
+                     </div>
+                 </form>
+             </div>
+         </div>
+     </div>
+     {% endblock %}
+     ```
+
+### 5. **Update Template `product_list.html`:**
+   - Tambahkan tombol edit dan delete di setiap item produk:
+     ```html
+     <div class="product-actions mt-4">
+         <a href="{% url 'main:edit_product' product.id %}"
+             class="edit-button bg-yellow-500 hover:bg-yellow-600 text-white rounded p-2 transition duration-300 shadow-md flex items-center">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+             </svg>
+         </a>
+         <form action="{% url 'main:delete_product' product.id %}" method="POST" class="delete-form"
+             onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline;">
+             {% csrf_token %}
+             <button type="submit"
+                 class="delete-button bg-red-500 hover:bg-red-600 text-white rounded p-2 transition duration-300 shadow-md flex items-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd"
+                         d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                         clip-rule="evenodd"/>
+                 </svg>
+             </button>
+         </form>
+     </div>
+     ```
+
+### 6. **Kustomisasi Login, Register, Homepage:**
+   -  Kustomisasi Login, Register, Homepage sudah dilkaukan di tugas sebelumnya.
+
+### 7. **Cek Kembali Semua Fitur:**
+   - Setelah implementasi selesai, pastikan untuk menguji semua fitur (edit dan hapus produk) di aplikasi untuk memastikan semuanya berjalan dengan baik dan tanpa error.
+
+
 # Tugas 4
 ## 1. Apa perbedaan antara HttpResponseRedirect() dan redirect()
 `HttpResponseRedirect()` : adalah kelas dari Django yang digunakan untuk mengalihkan permintaan ke URL tertentu. Kita harus mengimpor HttpResponseRedirect dari django.http dan memberikan URL yang ingin dituju.

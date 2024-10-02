@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -119,12 +120,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    # Menunjuk ke direktori `main/static/`
-    os.path.join(BASE_DIR, 'main/static/main'),
-]
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static'  # merujuk ke /static root project pada mode development
+    ]
+else:
+    # merujuk ke /static root project pada mode production
+    STATIC_ROOT = BASE_DIR / 'static'
 # MEDIA FILES
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

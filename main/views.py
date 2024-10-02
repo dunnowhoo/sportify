@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from main.forms import ProductEntryForm
 from main.models import Product
 from django.http import HttpResponse
@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.shortcuts import reverse
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -91,3 +92,32 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+
+def edit_product(request, id):
+    # Get product berdasarkan id dengan get_object_or_404 agar lebih aman
+    product = get_object_or_404(Product, pk=id)
+
+    # Inisialisasi form dengan instance product
+    form = ProductEntryForm(request.POST or None,
+                            request.FILES or None, instance=product)
+
+    if request.method == "POST" and form.is_valid():
+        # Simpan form dan kembali ke halaman awal
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    # Jika request bukan POST atau form tidak valid, render template
+    context = {'form': form}
+    return render(request, 'edit_product.html', context)
+
+
+def delete_product(request, id):
+    # Get product berdasarkan id dengan get_object_or_404 agar lebih aman
+    product = get_object_or_404(Product, pk=id)
+
+    # Hapus produk
+    product.delete()
+
+    # Kembali ke halaman utama setelah delete
+    return HttpResponseRedirect(reverse('main:show_main'))
