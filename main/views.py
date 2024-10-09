@@ -12,17 +12,18 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 @login_required(login_url='/login')
 def show_main(request):
     # Query all product entries
-    product_entries = Product.objects.filter(user=request.user)
 
     context = {
         'name': request.user.username,
         'npm': '2306275424',
         'class': 'PBP A',
-        'products': product_entries,
         'last_login': request.COOKIES['last_login'],
     }
 
@@ -41,12 +42,12 @@ def create_product_entry(request):
     return render(request, "create_product_entry.html", context)
 
 def show_xml(request):
-    data = Product.objects.all()
+    data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 
 def show_json(request):
-    data = Product.objects.all()
+    data = Product.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 
@@ -82,6 +83,8 @@ def login_user(request):
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
+        else :
+            messages.error(request, "Invalid username or password. Please try again.")
     else:
         form = AuthenticationForm(request)
     context = {'form': form}
@@ -121,3 +124,32 @@ def delete_product(request, id):
 
     # Kembali ke halaman utama setelah delete
     return HttpResponseRedirect(reverse('main:show_main'))
+
+
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    # Ambil data dari POST request
+    name = strip_tags(request.POST.get("name", ""))
+    price = strip_tags(request.POST.get("price", ""))
+    description = strip_tags(request.POST.get("description", ""))
+    stock = strip_tags(request.POST.get("stock", ""))
+    image = request.FILES.get("image")  # Jika ada file gambar yang diupload
+    user = request.user  # Pengguna yang sedang login
+
+    # Validasi data sederhana (misalnya, pastikan semua data tidak kosong)
+    if not (name and price and description and stock):
+        return JsonResponse({"error": "All fields are required."}, status=400)
+
+    # Buat produk baru dengan data yang diterima
+    new_product = Product(
+        name=name,
+        price=price,
+        description=description,
+        stock=stock,
+        image=image,
+        user=user
+    )
+    new_product.save()  # Simpan produk ke database
+
+    return HttpResponse(b"CREATED", status=201)

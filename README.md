@@ -5,6 +5,345 @@ At Sportify, we believe that finding the right equipment, apparel, and supplemen
 ## Tautan Aplikasi
 [https://fauzan-putra31-sportify.pbp.cs.ui.ac.id/](http://fauzan-putra31-sportify.pbp.cs.ui.ac.id/)
 
+# Tugas 6
+
+## Manfaat Penggunaan JavaScript dalam Pengembangan Aplikasi Web
+
+JavaScript adalah bahasa pemrograman yang sangat penting dalam pengembangan aplikasi web. Berikut adalah beberapa manfaat utamanya:
+
+1. **Interaktivitas:**
+   - JavaScript memungkinkan pengembang untuk membuat halaman web yang interaktif, seperti form validasi, animasi, dan responsif terhadap tindakan pengguna.
+
+2. **Manipulasi DOM:**
+   - Dengan JavaScript, kita dapat mengubah elemen HTML dan CSS secara dinamis, memberikan pengalaman pengguna yang lebih baik.
+
+3. **Pengolahan Data Asinkron:**
+   - JavaScript mendukung pengolahan data asinkron menggunakan AJAX, memungkinkan aplikasi untuk mengupdate konten tanpa memuat ulang halaman.
+
+4. **Peningkatan Kinerja:**
+   - Penggunaan JavaScript di sisi klien mengurangi beban server, karena sebagian logika aplikasi diproses di perangkat pengguna.
+
+5. **Integrasi dengan API:**
+   - JavaScript memudahkan pengambilan dan pengolahan data dari API eksternal menggunakan metode seperti `fetch()`.
+
+## Fungsi Penggunaan `await` Ketika Menggunakan `fetch()`
+
+`await` digunakan untuk menunggu hasil dari sebuah Promise sebelum melanjutkan eksekusi kode. Dalam konteks `fetch()`, berikut adalah penjelasannya:
+
+- **Menunggu Respon:**
+  - Ketika menggunakan `await` dengan `fetch()`, JavaScript akan menunggu hingga permintaan HTTP selesai dan respon diterima. Ini memastikan bahwa data yang diambil telah siap untuk digunakan sebelum melanjutkan eksekusi kode.
+
+- **Menghindari Callback Hell:**
+  - Dengan menggunakan `await`, kode menjadi lebih mudah dibaca dan ditulis, menghindari penggunaan callback yang kompleks.
+
+**Apa yang Terjadi Jika Kita Tidak Menggunakan `await`:**
+
+Jika kita tidak menggunakan `await`, eksekusi kode akan tetap berjalan tanpa menunggu hasil dari `fetch()`. Hal ini dapat mengakibatkan:
+
+- **Data Tidak Tersedia:**
+  - Kode yang bergantung pada data yang diambil mungkin dijalankan sebelum data tersebut tersedia, menyebabkan kesalahan atau data yang tidak lengkap.
+
+- **Promise Tidak Tertangani:**
+  - Tanpa `await`, kita mungkin tidak menangani Promise yang dihasilkan oleh `fetch()`, yang dapat menghasilkan error yang tidak tertangani jika permintaan gagal.
+
+## Mengapa Kita Perlu Menggunakan Decorator `csrf_exempt` pada View yang Akan Digunakan untuk AJAX POST
+
+Decorator `csrf_exempt` digunakan untuk mengabaikan perlindungan CSRF (Cross-Site Request Forgery) pada view tertentu. Dalam konteks AJAX POST, kita perlu menggunakannya karena:
+
+- **Permintaan AJAX:**
+  - Permintaan AJAX tidak selalu membawa token CSRF secara otomatis. Jika kita tidak menggunakan `csrf_exempt`, server akan menolak permintaan karena tidak ada token yang valid.
+
+- **Kenyamanan Pengembangan:**
+  - Untuk beberapa aplikasi yang tidak memerlukan perlindungan CSRF yang ketat, menggunakan `csrf_exempt` pada endpoint AJAX dapat mempermudah pengembangan.
+
+## Mengapa Pembersihan Data Input Pengguna Dilakukan di Backend Juga dan Tidak Hanya di Frontend
+
+Pembersihan data input pengguna dilakukan di backend untuk beberapa alasan:
+
+1. **Keamanan:**
+   - Data dari frontend dapat dimanipulasi oleh pengguna, sehingga validasi dan pembersihan di backend diperlukan untuk mencegah serangan seperti XSS (Cross-Site Scripting) dan injeksi SQL.
+
+2. **Konsistensi:**
+   - Memastikan bahwa data yang diterima oleh server selalu dalam format yang benar, terlepas dari sumber inputnya.
+
+3. **Fungsi Validasi:**
+   - Beberapa validasi mungkin memerlukan logika yang lebih kompleks atau bergantung pada data di server, yang tidak dapat dilakukan di frontend.
+
+4. **Pengalaman Pengguna:**
+   - Meskipun validasi di frontend dapat meningkatkan pengalaman pengguna, selalu ada kemungkinan pengguna bisa mengakali logika di frontend. Oleh karena itu, penting untuk melakukan validasi di backend sebagai lapisan tambahan.
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step
+
+### 1. **AJAX GET**
+#### Buat Fungsi AJAX GET
+- Tambahkan fungsi JavaScript untuk melakukan permintaan GET menggunakan `fetch()`
+
+```javascript
+async function getProductEntries() {
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+}
+
+    async function refreshProductEntries() {
+        document.getElementById("product_entry_cards").innerHTML = "";
+        document.getElementById("product_entry_cards").className = "";
+        const productEntries = await getProductEntries();
+        let htmlString = "";
+        let classNameString = "";
+
+        if (productEntries.length === 0) {
+            classNameString = "text-left text-gray-300";
+            htmlString = `
+            <p class="text-left text-gray-300">Belum ada produk ⚽️</p>
+        `;
+        } else {
+            classNameString = "product-grid"; // Applying grid layout
+            productEntries.forEach((item) => {
+                const name = DOMPurify.sanitize(item.fields.name);
+                const price = DOMPurify.sanitize(item.fields.price);
+                const description = DOMPurify.sanitize(item.fields.description);
+                const stock = DOMPurify.sanitize(item.fields.stock);
+                const imageUrl = item.fields.image ? DOMPurify.sanitize(item.fields.image.url) : "https://i.imgur.com/XLkw4CT.jpeg";
+
+                htmlString += `
+                <div class="product-item">
+                    <div class="product-info">
+                        <p class="product-name">${name}</p>
+                        <p class="product-price">Price: Rp${price}</p>
+                        <p class="product-description">${description}</p>
+                        <p class="product-stock">Stock: ${stock}</p>
+                        <div class="product-actions mt-4">
+                            <a href="/edit-product/${item.pk}" class="edit-button bg-yellow-500 hover:bg-yellow-600 text-white rounded p-2 transition duration-300 shadow-md flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                </svg>
+                                Edit
+                            </a>
+                            <form action="/delete-product/${item.pk}/" method="POST" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-button bg-red-500 hover:bg-red-600 text-white rounded p-2 transition duration-300 shadow-md flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    ${item.fields.stock > 0 ? `
+                        <button class="buy-button">Buy</button>
+                    ` : `
+                        <button class="buy-button out-of-stock" disabled>Out of Stock</button>
+                    `}
+                </div>
+            `;
+            });
+        }
+
+        document.getElementById("product_entry_cards").className = classNameString;
+        document.getElementById("product_entry_cards").innerHTML = htmlString;
+    }
+    refreshProductEntries();
+```
+
+### 2. **AJAX POST**
+#### a. Buat Tombol dan Modal
+- Buat tombol di halaman utama untuk membuka modal yang berisi form penambahan mood:
+
+```html
+<!-- Recent Products Section -->
+<div class="recent-products flex items-center justify-between">
+    <h2>Recent Products</h2>
+    <div class="flex space-x-4">
+        <a href="{% url 'main:create_product_entry' %}"
+            class="bg-green-400 hover:bg-green-400 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+            Add New Product Entry
+        </a>
+        <button data-modal-target="crudModal" data-modal-toggle="crudModal"
+            class="btn bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            onclick="showModal();">
+            Add New Product Entry by AJAX
+        </button>
+    </div>
+</div>
+<div id="product_entry_cards"></div>
+<div id="crudModal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+    <div id="crudModalContent"
+        class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t">
+            <h3 class="text-xl font-semibold text-gray-900">
+                Add New Product Entry
+            </h3>
+            <button type="button"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                id="closeModalBtn">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div class="px-6 py-4 space-y-6">
+            <form id="productEntryForm">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                    <input type="text" id="name" name="name"
+                        class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-green-500"
+                        placeholder="Enter product name" required>
+                </div>
+                <div class="mb-4">
+                    <label for="price" class="block text-sm font-medium text-gray-700">Price (Rp)</label>
+                    <input type="number" id="price" name="price" min="0"
+                        class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-green-400"
+                        placeholder="Enter product price" required>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="description" name="description" rows="3"
+                        class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-green-500"
+                        placeholder="Describe the product" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
+                    <input type="number" id="stock" name="stock" min="0"
+                        class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-green-500"
+                        placeholder="Enter stock quantity" required>
+                </div>
+                <div class="mb-4">
+                    <label for="image" class="block text-sm font-medium text-gray-700">Product Image</label>
+                    <input type="file" id="image" name="image"
+                        class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-green-500"
+                        accept="image/*" required>
+                </div>
+            </form>
+        </div>
+        <!-- Modal footer -->
+        <div
+            class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+            <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg"
+                id="cancelButton">Cancel</button>
+            <button type="submit" id="submitProductEntry" form="productEntryForm"
+                class="bg-green-500 hover:bg-green-6500 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+        </div>
+    </div>
+</div>
+```
+
+#### b. Tangani Tombol dan Form
+- Tambahkan event listener untuk tombol dan form:
+
+```javascript
+async function getProductEntries() {
+        return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+    }
+document.getElementById("productEntryForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        addProductEntry();
+    })
+ function addProductEntry() {
+        fetch("{% url 'main:add_product_entry_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#productEntryForm')),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return refreshProductEntries(); // Menunggu hingga produk di-refresh
+                } else {
+                    throw new Error('Failed to add product');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        document.getElementById("productEntryForm").reset();
+        document.querySelector("[data-modal-toggle='crudModal']").click();
+
+        return false;
+    }
+
+            const modal = document.getElementById('crudModal');
+            const modalContent = document.getElementById('crudModalContent');
+
+            function showModal() {
+                const modal = document.getElementById('crudModal');
+                const modalContent = document.getElementById('crudModalContent');
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('opacity-0', 'scale-95');
+                    modalContent.classList.add('opacity-100', 'scale-100');
+                }, 50);
+            }
+
+            function hideModal() {
+                const modal = document.getElementById('crudModal');
+                const modalContent = document.getElementById('crudModalContent');
+
+                modalContent.classList.remove('opacity-100', 'scale-100');
+                modalContent.classList.add('opacity-0', 'scale-95');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 150);
+            }
+
+            document.getElementById("cancelButton").addEventListener("click", hideModal);
+            document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+```
+
+### 3. **View Django untuk AJAX POST**
+#### a. Buat Fungsi View
+- Di dalam `views.py`, buat fungsi view untuk menangani permintaan POST:
+
+```python
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    # Ambil data dari POST request
+    name = strip_tags(request.POST.get("name", ""))
+    price = strip_tags(request.POST.get("price", ""))
+    description = strip_tags(request.POST.get("description", ""))
+    stock = strip_tags(request.POST.get("stock", ""))
+    image = request.FILES.get("image")  # Jika ada file gambar yang diupload
+    user = request.user  # Pengguna yang sedang login
+
+    # Validasi data sederhana (misalnya, pastikan semua data tidak kosong)
+    if not (name and price and description and stock):
+        return JsonResponse({"error": "All fields are required."}, status=400)
+
+    # Buat produk baru dengan data yang diterima
+    new_product = Product(
+        name=name,
+        price=price,
+        description=description,
+        stock=stock,
+        image=image,
+        user=user
+    )
+    new_product.save()  # Simpan produk ke database
+
+    return HttpResponse(b"CREATED", status=201)
+```
+
+### 4. **Routing**
+#### a. Tambahkan Path di `urls.py`
+- Buat path untuk view baru yang telah dibuat:
+
+```python
+from main.views import add_product_entry_ajax
+
+urlpatterns = [
+    # Path lainnya...
+    path('create-ajax', add_product_entry_ajax,name='add_product_entry_ajax'),
+]
+```
+
 
 # Tugas 5 
 ## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!

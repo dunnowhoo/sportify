@@ -39,7 +39,7 @@ body {
     border: none;
     border-radius: 20px;
     padding: 10px;
-    color: white;
+    color: black;
     width: 300px;
 }
 
@@ -170,7 +170,7 @@ body {
     background-color: #555;
     border: none;
     border-radius: 5px;
-    color: white;
+    color: black;
 }
 
 .dropdown button {
